@@ -163,6 +163,72 @@
         .btn-delete:hover {
             background: var(--hover-orange);
         }
+        /* Fix for BODMAS/operator column alignment */
+.buttons {
+    grid-template-columns: repeat(5, 1fr);
+    grid-auto-rows: minmax(60px, auto);
+}
+
+/* Make all scientific buttons equal width with centered text */
+.btn-scientific {
+    font-size: 14px;
+    text-align: center;
+    padding: 18px 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60px;
+}
+
+/* Ensure operator buttons are perfectly aligned in their column */
+.buttons > button:nth-child(5n) { /* Every 5th button (last column) */
+    grid-column: 5;
+}
+
+/* Specific adjustments for scientific function text */
+#sqrtBtn, #squareBtn, #percentBtn, #piBtn, #powerBtn, #absBtn, #negateBtn {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* Make sure all buttons in the operator column have consistent styling */
+.buttons button:nth-child(5),  /* ÷ */
+.buttons button:nth-child(10), /* × */
+.buttons button:nth-child(15), /* − */
+.buttons button:nth-child(20), /* + */
+.buttons button:nth-child(25) { /* Already accounted for by equals button */
+    background: var(--primary-purple);
+    color: var(--white);
+    font-size: 20px;
+    font-weight: 700;
+    padding: 18px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60px;
+}
+.buttons button:nth-child(5):hover,
+.buttons button:nth-child(10):hover,
+.buttons button:nth-child(15):hover,
+.buttons button:nth-child(20):hover {
+    background: var(--hover-purple);
+}
+
+.btn-equals {
+    font-size: 20px;
+    font-weight: 700;
+    grid-column: 4 / span 2; 
+}
+
+.btn-number, .btn-decimal {
+    font-size: 18px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60px;
+}
     </style>
 </head>
 <body>
