@@ -3,16 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Scientific Calculator</title>
+    <title>Rose Gold Scientific Calculator</title>
     <style>
-        /* CSS Colors */
+        /* Rose Gold Theme Colors */
         :root {
-            /* Background Colors */
-            --primary-purple: #667eea;
-            --dark-purple: #764ba2;
-            --hover-purple: #5568d3;
+            --rose-gold: #e0bfb8;
+            --dark-rose: #d4a59a;
+            --light-rose: #f7e7e4;
+            --pale-rose: #f9f1f0;
+            --metallic-rose: #c9a8a9;
+            --accent-gold: #d4af37;
+            --dark-gold: #b8941f;
             
-            /* Button Colors */
             --success-green: #51cf66;
             --hover-green: #40c057;
             
@@ -22,17 +24,19 @@
             --warning-orange: #ffa94d;
             --hover-orange: #ff9a3a;
             
-            --scientific-blue: #4dabf7;
-            --hover-blue: #339af0;
+            --scientific-blue: #8ecae6;
+            --hover-blue: #7ab7d6;
             
-            /* Neutral Colors */
-            --light-gray: #f0f0f0;
-            --medium-gray: #e0e0e0;
-            --text-dark: #333;
-            --text-light: #888;
+            --bracket-teal: #80cbc4;
+            --hover-teal: #68b8b0;
             
-            --white: white;
-            --shadow-color: rgba(0, 0, 0, 0.3);
+            --memory-yellow: #ffd166;
+            --hover-yellow: #ffc745;
+            
+            --text-dark: #5a4a42;
+            --text-light: #8a7a72;
+            --white: #ffffff;
+            --shadow-color: rgba(90, 74, 66, 0.15);
         }
 
         * {
@@ -47,184 +51,321 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--dark-purple) 100%);
+            background: var(--pale-rose);
             padding: 20px;
         }
 
         .calculator {
-            background: var(--white);
-            border-radius: 20px;
-            box-shadow: 0 10px 50px var(--shadow-color);
-            padding: 20px;
-            width: 380px;
+            background: linear-gradient(135deg, var(--light-rose) 0%, var(--white) 100%);
+            border-radius: 25px;
+            box-shadow: 
+                0 15px 35px var(--shadow-color),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            padding: 25px;
+            width: 420px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .calculator::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-gold), var(--rose-gold), var(--accent-gold));
+            border-radius: 25px 25px 0 0;
         }
 
         .display {
-            background: var(--light-gray);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
+            background: var(--white);
+            border-radius: 15px;
+            padding: 20px 25px;
+            margin-bottom: 25px;
             text-align: right;
-            min-height: 80px;
+            min-height: 100px;
+            border: 1px solid var(--rose-gold);
+            box-shadow: 
+                inset 0 2px 4px rgba(212, 175, 55, 0.1),
+                0 1px 2px rgba(255, 255, 255, 0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .display::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
         }
 
         .display-previous {
-            font-size: 14px;
+            font-size: 16px;
             color: var(--text-light);
-            min-height: 20px;
-            margin-bottom: 5px;
+            min-height: 24px;
+            margin-bottom: 8px;
+            font-weight: 400;
         }
 
         .display-current {
-            font-size: 32px;
-            font-weight: bold;
+            font-size: 36px;
+            font-weight: 700;
             color: var(--text-dark);
             word-wrap: break-word;
+            min-height: 45px;
+            letter-spacing: 1px;
         }
 
         .buttons {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
+            gap: 12px;
         }
 
         button {
-            padding: 18px 10px;
-            font-size: 16px;
+            padding: 20px 10px;
+            font-size: 17px;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
             font-weight: 600;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 4px 8px rgba(90, 74, 66, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+
+        button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.4);
         }
 
         button:hover {
-            transform: scale(1.05);
+            transform: translateY(-2px);
+            box-shadow: 
+                0 6px 12px rgba(90, 74, 66, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.7);
         }
 
         button:active {
-            transform: scale(0.95);
+            transform: translateY(1px);
+            box-shadow: 
+                0 2px 4px rgba(90, 74, 66, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
         }
 
         .btn-number,
         .btn-decimal {
-            background: var(--light-gray);
+            background: linear-gradient(to bottom, var(--white), var(--light-rose));
             color: var(--text-dark);
+            border: 1px solid var(--rose-gold);
         }
 
         .btn-number:hover,
         .btn-decimal:hover {
-            background: var(--medium-gray);
+            background: linear-gradient(to bottom, #ffffff, var(--rose-gold));
         }
 
         .btn-operator {
-            background: var(--primary-purple);
+            background: linear-gradient(to bottom, var(--rose-gold), var(--dark-rose));
             color: var(--white);
+            border: 1px solid var(--metallic-rose);
+            text-shadow: 0 1px 1px rgba(90, 74, 66, 0.3);
         }
 
         .btn-operator:hover {
-            background: var(--hover-purple);
+            background: linear-gradient(to bottom, var(--dark-rose), #c9978c);
         }
 
         .btn-scientific {
-            background: var(--scientific-blue);
+            background: linear-gradient(to bottom, var(--scientific-blue), #7ab7d6);
             color: var(--white);
-            font-size: 14px;
+            font-size: 15px;
+            border: 1px solid #8ecae6;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
         }
 
         .btn-scientific:hover {
-            background: var(--hover-blue);
+            background: linear-gradient(to bottom, var(--hover-blue), #6aa5c4);
+        }
+
+        .btn-bracket {
+            background: linear-gradient(to bottom, var(--bracket-teal), #68b8b0);
+            color: var(--white);
+            border: 1px solid #80cbc4;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-bracket:hover {
+            background: linear-gradient(to bottom, var(--hover-teal), #58a69f);
+        }
+
+        .btn-memory {
+            background: linear-gradient(to bottom, var(--memory-yellow), var(--hover-yellow));
+            color: var(--text-dark);
+            border: 1px solid #ffd166;
+            font-size: 14px;
+        }
+
+        .btn-memory:hover {
+            background: linear-gradient(to bottom, #ffc745, #e6b635);
         }
 
         .btn-clear {
-            background: var(--danger-red);
+            background: linear-gradient(to bottom, var(--danger-red), var(--hover-red));
             color: var(--white);
+            border: 1px solid #ff6b6b;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
         }
 
         .btn-clear:hover {
-            background: var(--hover-red);
+            background: linear-gradient(to bottom, var(--hover-red), #dd4a4a);
         }
 
         .btn-equals {
-            background: var(--success-green);
+            background: linear-gradient(to bottom, var(--success-green), var(--hover-green));
             color: var(--white);
-            grid-column: 5; /* CHANGE 1: Changed from "span 2" to "5" */
+            border: 1px solid #51cf66;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
         }
 
         .btn-equals:hover {
-            background: var(--hover-green);
+            background: linear-gradient(to bottom, var(--hover-green), #3aa84e);
         }
 
         .btn-delete {
-            background: var(--warning-orange);
+            background: linear-gradient(to bottom, var(--warning-orange), var(--hover-orange));
             color: var(--white);
+            border: 1px solid #ffa94d;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
         }
 
         .btn-delete:hover {
-            background: var(--hover-orange);
+            background: linear-gradient(to bottom, var(--hover-orange), #e68a3a);
+        }
+        
+        .bracket-indicator {
+            font-size: 13px;
+            color: var(--bracket-teal);
+            font-weight: 600;
+            margin-top: 8px;
+            text-align: right;
+            min-height: 16px;
+            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+        }
+
+        .calculator-title {
+            text-align: center;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .calculator-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 25%;
+            right: 25%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
         }
     </style>
 </head>
 <body>
     <div class="calculator">
+        <div class="calculator-title">ROSE GOLD CALCULATOR</div>
         <div class="display">
             <div class="display-previous" id="previousDisplay"></div>
             <div class="display-current" id="currentDisplay">0</div>
+            <div class="bracket-indicator" id="bracketIndicator"></div>
         </div>
         <div class="buttons">
             <!-- Scientific Functions Row -->
             <button class="btn-scientific" id="sqrtBtn">√</button>
             <button class="btn-scientific" id="squareBtn">x²</button>
             <button class="btn-scientific" id="percentBtn">%</button>
-            <button class="btn-clear" id="clearBtn">AC</button>
-            <button class="btn-delete" id="deleteBtn">DEL</button>
+            <button class="btn-bracket" id="openBracketBtn">(</button>
+            <button class="btn-bracket" id="closeBracketBtn">)</button>
             
             <!-- Row 1 -->
             <button class="btn-scientific" id="piBtn">π</button>
-            <button class="btn-number" data-number="7">7</button>
-            <button class="btn-number" data-number="8">8</button>
-            <button class="btn-number" data-number="9">9</button>
+            <button class="btn-memory" id="memoryClearBtn">MC</button>
+            <button class="btn-memory" id="memoryRecallBtn">MR</button>
+            <button class="btn-memory" id="memoryAddBtn">M+</button>
             <button class="btn-operator" data-operator="/">÷</button>
             
             <!-- Row 2 -->
             <button class="btn-scientific" id="powerBtn">xʸ</button>
-            <button class="btn-number" data-number="4">4</button>
-            <button class="btn-number" data-number="5">5</button>
-            <button class="btn-number" data-number="6">6</button>
+            <button class="btn-number" data-number="7">7</button>
+            <button class="btn-number" data-number="8">8</button>
+            <button class="btn-number" data-number="9">9</button>
             <button class="btn-operator" data-operator="*">×</button>
             
             <!-- Row 3 -->
             <button class="btn-scientific" id="absBtn">|x|</button>
-            <button class="btn-number" data-number="1">1</button>
-            <button class="btn-number" data-number="2">2</button>
+            <button class="btn-number" data-number="4">4</button>
+            <button class="btn-number" data-number="5">5</button>
             <button class="btn-number" data-number="3">3</button>
             <button class="btn-operator" data-operator="-">−</button>
             
             <!-- Row 4 -->
             <button class="btn-scientific" id="negateBtn">+/−</button>
+            <button class="btn-number" data-number="1">1</button>
+            <button class="btn-number" data-number="2">2</button>
             <button class="btn-number" data-number="0">0</button>
+            <button class="btn-operator" data-operator="+">+</button>
+            
+            <!-- Row 5 -->
+            <button class="btn-clear" id="clearBtn">AC</button>
+            <button class="btn-delete" id="deleteBtn">DEL</button>
             <button class="btn-decimal" id="decimalBtn">.</button>
-            <button class="btn-operator" data-operator="+">+</button> <!-- CHANGE 2: Moved before equals -->
+            <button class="btn-memory" id="memorySubtractBtn">M-</button>
             <button class="btn-equals" id="equalsBtn">=</button>
         </div>
     </div>
 
     <script>
-        // Calculator class to organize our code
         class Calculator {
             constructor() {
-                // Properties to store calculator state
+                // Variables to store calculator state
                 this.currentValue = '0';
                 this.previousValue = '';
                 this.operator = null;
                 this.shouldResetDisplay = false;
                 
+                // Bracket tracking
+                this.openBrackets = 0;
+                this.inBracketMode = false;
+                
+                // Memory
+                this.memory = 0;
+                this.memoryActive = false;
+                
                 // Get DOM elements
                 this.currentDisplay = document.getElementById('currentDisplay');
                 this.previousDisplay = document.getElementById('previousDisplay');
+                this.bracketIndicator = document.getElementById('bracketIndicator');
                 
                 // Initialize event listeners
                 this.initializeEventListeners();
+                this.updateBracketIndicator();
             }
             
             initializeEventListeners() {
@@ -250,6 +391,10 @@
                 document.getElementById('decimalBtn').addEventListener('click', () => this.appendDecimal());
                 document.getElementById('equalsBtn').addEventListener('click', () => this.calculate());
                 
+                // Bracket buttons
+                document.getElementById('openBracketBtn').addEventListener('click', () => this.openBracket());
+                document.getElementById('closeBracketBtn').addEventListener('click', () => this.closeBracket());
+                
                 // Scientific function buttons
                 document.getElementById('sqrtBtn').addEventListener('click', () => this.squareRoot());
                 document.getElementById('squareBtn').addEventListener('click', () => this.square());
@@ -258,6 +403,12 @@
                 document.getElementById('powerBtn').addEventListener('click', () => this.chooseOperator('^'));
                 document.getElementById('absBtn').addEventListener('click', () => this.absolute());
                 document.getElementById('negateBtn').addEventListener('click', () => this.negate());
+                
+                // Memory buttons
+                document.getElementById('memoryClearBtn').addEventListener('click', () => this.memoryClear());
+                document.getElementById('memoryRecallBtn').addEventListener('click', () => this.memoryRecall());
+                document.getElementById('memoryAddBtn').addEventListener('click', () => this.memoryAdd());
+                document.getElementById('memorySubtractBtn').addEventListener('click', () => this.memorySubtract());
                 
                 // Keyboard support
                 document.addEventListener('keydown', (e) => this.handleKeyboard(e));
@@ -268,6 +419,7 @@
                 if (this.shouldResetDisplay) {
                     this.currentValue = number;
                     this.shouldResetDisplay = false;
+                    this.inBracketMode = false;
                 } else {
                     // Don't allow multiple leading zeros
                     if (this.currentValue === '0' && number === '0') return;
@@ -288,6 +440,7 @@
                 if (this.shouldResetDisplay) {
                     this.currentValue = '0.';
                     this.shouldResetDisplay = false;
+                    this.inBracketMode = false;
                 } else {
                     this.currentValue += '.';
                 }
@@ -295,6 +448,11 @@
             }
             
             chooseOperator(operator) {
+                // If we're in bracket mode, close brackets before operator
+                if (this.inBracketMode) {
+                    this.closeBracket();
+                }
+                
                 // If we have a previous value and operator, calculate first
                 if (this.operator !== null && !this.shouldResetDisplay) {
                     this.calculate();
@@ -308,6 +466,11 @@
             
             calculate() {
                 if (this.operator === null || this.shouldResetDisplay) return;
+                
+                // Close any open brackets before calculation
+                while (this.openBrackets > 0) {
+                    this.closeBracket();
+                }
                 
                 const prev = parseFloat(this.previousValue);
                 const current = parseFloat(this.currentValue);
@@ -346,14 +509,93 @@
                 this.operator = null;
                 this.previousValue = '';
                 this.shouldResetDisplay = true;
+                this.inBracketMode = false;
+                this.openBrackets = 0;
                 this.updateDisplay();
                 this.updatePreviousDisplay();
+                this.updateBracketIndicator();
+            }
+            
+            // BRACKET FUNCTIONS
+            openBracket() {
+                // If we just calculated or have a result, start fresh
+                if (this.shouldResetDisplay || this.currentValue === '0') {
+                    this.currentValue = '(';
+                    this.shouldResetDisplay = false;
+                } else if (this.inBracketMode) {
+                    // If already in bracket mode, we need an operator before another bracket
+                    return;
+                } else {
+                    // If we have a number, we need an operator before a bracket
+                    if (!isNaN(parseFloat(this.currentValue))) {
+                        return;
+                    }
+                    this.currentValue += '(';
+                }
+                
+                this.openBrackets++;
+                this.inBracketMode = true;
+                this.updateDisplay();
+                this.updateBracketIndicator();
+            }
+            
+            closeBracket() {
+                if (this.openBrackets <= 0) return;
+                
+                // Make sure it's a valid number before closing
+                if (!isNaN(parseFloat(this.currentValue)) || this.currentValue.endsWith(')')) {
+                    this.currentValue += ')';
+                    this.openBrackets--;
+                    
+                    // If all brackets are closed, exit bracket mode
+                    if (this.openBrackets === 0) {
+                        this.inBracketMode = false;
+                    }
+                    
+                    this.updateDisplay();
+                    this.updateBracketIndicator();
+                }
+            }
+            
+            // MEMORY FUNCTIONS
+            memoryClear() {
+                this.memory = 0;
+                this.memoryActive = false;
+                alert('Memory Cleared');
+            }
+            
+            memoryRecall() {
+                if (this.memoryActive) {
+                    this.currentValue = this.memory.toString();
+                    this.shouldResetDisplay = true;
+                    this.updateDisplay();
+                } else {
+                    alert('Memory is empty');
+                }
+            }
+            
+            memoryAdd() {
+                const current = parseFloat(this.currentValue);
+                if (!isNaN(current)) {
+                    this.memory += current;
+                    this.memoryActive = true;
+                    this.shouldResetDisplay = true;
+                    alert(`Added to memory: ${this.memory}`);
+                }
+            }
+            
+            memorySubtract() {
+                const current = parseFloat(this.currentValue);
+                if (!isNaN(current)) {
+                    this.memory -= current;
+                    this.memoryActive = true;
+                    this.shouldResetDisplay = true;
+                    alert(`Subtracted from memory: ${this.memory}`);
+                }
             }
             
             // SCIENTIFIC FUNCTIONS
-            
             squareRoot() {
-                // √ - Square root function
                 const current = parseFloat(this.currentValue);
                 if (current < 0) {
                     alert('Cannot calculate square root of negative number!');
@@ -366,7 +608,6 @@
             }
             
             square() {
-                // x² - Square function
                 const current = parseFloat(this.currentValue);
                 const result = current * current;
                 this.currentValue = Math.round(result * 100000000) / 100000000 + '';
@@ -375,7 +616,6 @@
             }
             
             percent() {
-                // % - Percentage function (divides by 100)
                 const current = parseFloat(this.currentValue);
                 const result = current / 100;
                 this.currentValue = result + '';
@@ -384,14 +624,12 @@
             }
             
             insertPi() {
-                // π - Insert Pi value (3.14159...)
                 this.currentValue = Math.PI + '';
                 this.shouldResetDisplay = true;
                 this.updateDisplay();
             }
             
             absolute() {
-                // |x| - Absolute value (makes negative numbers positive)
                 const current = parseFloat(this.currentValue);
                 const result = Math.abs(current);
                 this.currentValue = result + '';
@@ -400,7 +638,6 @@
             }
             
             negate() {
-                // +/- - Change sign (positive to negative or vice versa)
                 if (this.currentValue === '0') return;
                 if (this.currentValue.startsWith('-')) {
                     this.currentValue = this.currentValue.slice(1);
@@ -415,22 +652,42 @@
                 this.previousValue = '';
                 this.operator = null;
                 this.shouldResetDisplay = false;
+                this.openBrackets = 0;
+                this.inBracketMode = false;
                 this.updateDisplay();
                 this.updatePreviousDisplay();
+                this.updateBracketIndicator();
             }
             
             delete() {
                 if (this.shouldResetDisplay) return;
                 
+                // Check if we're deleting a bracket
+                if (this.currentValue.endsWith('(')) {
+                    this.openBrackets = Math.max(0, this.openBrackets - 1);
+                } else if (this.currentValue.endsWith(')')) {
+                    this.openBrackets++;
+                }
+                
                 if (this.currentValue.length === 1 || (this.currentValue.length === 2 && this.currentValue.startsWith('-'))) {
                     this.currentValue = '0';
+                    this.openBrackets = 0;
+                    this.inBracketMode = false;
                 } else {
                     this.currentValue = this.currentValue.slice(0, -1);
                 }
+                
+                // Update bracket mode
+                if (this.openBrackets === 0) {
+                    this.inBracketMode = false;
+                }
+                
                 this.updateDisplay();
+                this.updateBracketIndicator();
             }
             
             handleKeyboard(e) {
+                e.preventDefault();
                 if (e.key >= '0' && e.key <= '9') this.appendNumber(e.key);
                 if (e.key === '.') this.appendDecimal();
                 if (e.key === 'Enter' || e.key === '=') this.calculate();
@@ -438,6 +695,9 @@
                 if (e.key === 'Escape') this.clear();
                 if (['+', '-', '*', '/'].includes(e.key)) this.chooseOperator(e.key);
                 if (e.key === '%') this.percent();
+                if (e.key === '(') this.openBracket();
+                if (e.key === ')') this.closeBracket();
+                if (e.key === '^') this.chooseOperator('^');
             }
             
             updateDisplay() {
@@ -458,9 +718,16 @@
                     this.previousDisplay.textContent = '';
                 }
             }
+            
+            updateBracketIndicator() {
+                if (this.openBrackets > 0) {
+                    this.bracketIndicator.textContent = `Open Brackets: ${this.openBrackets}`;
+                } else {
+                    this.bracketIndicator.textContent = '';
+                }
+            }
         }
         
-        // Initialize calculator when page loads
         const calculator = new Calculator();
     </script>
 </body>
