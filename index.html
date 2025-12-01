@@ -3,40 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rose Gold Scientific Calculator</title>
+    <title>Scientific Calculator</title>
     <style>
-        /* Rose Gold Theme Colors */
         :root {
             --rose-gold: #e0bfb8;
             --dark-rose: #d4a59a;
             --light-rose: #f7e7e4;
-            --pale-rose: #f9f1f0;
-            --metallic-rose: #c9a8a9;
             --accent-gold: #d4af37;
-            --dark-gold: #b8941f;
-            
             --success-green: #51cf66;
-            --hover-green: #40c057;
-            
             --danger-red: #ff6b6b;
-            --hover-red: #ee5a5a;
-            
             --warning-orange: #ffa94d;
-            --hover-orange: #ff9a3a;
-            
             --scientific-blue: #8ecae6;
-            --hover-blue: #7ab7d6;
-            
             --bracket-teal: #80cbc4;
-            --hover-teal: #68b8b0;
-            
             --memory-yellow: #ffd166;
-            --hover-yellow: #ffc745;
-            
             --text-dark: #5a4a42;
             --text-light: #8a7a72;
             --white: #ffffff;
-            --shadow-color: rgba(90, 74, 66, 0.15);
         }
 
         * {
@@ -51,288 +33,188 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: var(--pale-rose);
+            background: var(--light-rose);
             padding: 20px;
         }
 
         .calculator {
-            background: linear-gradient(135deg, var(--light-rose) 0%, var(--white) 100%);
-            border-radius: 25px;
-            box-shadow: 
-                0 15px 35px var(--shadow-color),
-                inset 0 1px 0 rgba(255, 255, 255, 0.8);
-            padding: 25px;
-            width: 420px;
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .calculator::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--accent-gold), var(--rose-gold), var(--accent-gold));
-            border-radius: 25px 25px 0 0;
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(90, 74, 66, 0.15);
+            padding: 20px;
+            width: 400px;
+            border-top: 4px solid var(--accent-gold);
         }
 
         .display {
-            background: var(--white);
-            border-radius: 15px;
-            padding: 20px 25px;
-            margin-bottom: 25px;
+            background: var(--light-rose);
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
             text-align: right;
-            min-height: 100px;
+            min-height: 80px;
             border: 1px solid var(--rose-gold);
-            box-shadow: 
-                inset 0 2px 4px rgba(212, 175, 55, 0.1),
-                0 1px 2px rgba(255, 255, 255, 0.8);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .display::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
         }
 
         .display-previous {
-            font-size: 16px;
+            font-size: 14px;
             color: var(--text-light);
-            min-height: 24px;
-            margin-bottom: 8px;
-            font-weight: 400;
+            min-height: 20px;
+            margin-bottom: 5px;
         }
 
         .display-current {
-            font-size: 36px;
-            font-weight: 700;
+            font-size: 32px;
+            font-weight: bold;
             color: var(--text-dark);
             word-wrap: break-word;
-            min-height: 45px;
-            letter-spacing: 1px;
+            min-height: 40px;
         }
 
         .buttons {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 12px;
+            gap: 10px;
         }
 
         button {
-            padding: 20px 10px;
-            font-size: 17px;
+            padding: 15px 5px;
+            font-size: 16px;
             border: none;
-            border-radius: 12px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.2s;
             font-weight: 600;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 
-                0 4px 8px rgba(90, 74, 66, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.6);
-        }
-
-        button::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: rgba(255, 255, 255, 0.4);
         }
 
         button:hover {
             transform: translateY(-2px);
-            box-shadow: 
-                0 6px 12px rgba(90, 74, 66, 0.15),
-                inset 0 1px 0 rgba(255, 255, 255, 0.7);
         }
 
         button:active {
-            transform: translateY(1px);
-            box-shadow: 
-                0 2px 4px rgba(90, 74, 66, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+            transform: translateY(0);
         }
 
-        .btn-number,
-        .btn-decimal {
-            background: linear-gradient(to bottom, var(--white), var(--light-rose));
+        .btn-number, .btn-decimal {
+            background: var(--white);
             color: var(--text-dark);
             border: 1px solid var(--rose-gold);
         }
 
-        .btn-number:hover,
-        .btn-decimal:hover {
-            background: linear-gradient(to bottom, #ffffff, var(--rose-gold));
+        .btn-number:hover, .btn-decimal:hover {
+            background: var(--light-rose);
         }
 
         .btn-operator {
-            background: linear-gradient(to bottom, var(--rose-gold), var(--dark-rose));
+            background: var(--rose-gold);
             color: var(--white);
-            border: 1px solid var(--metallic-rose);
-            text-shadow: 0 1px 1px rgba(90, 74, 66, 0.3);
         }
 
         .btn-operator:hover {
-            background: linear-gradient(to bottom, var(--dark-rose), #c9978c);
+            background: var(--dark-rose);
         }
 
         .btn-scientific {
-            background: linear-gradient(to bottom, var(--scientific-blue), #7ab7d6);
+            background: var(--scientific-blue);
             color: var(--white);
-            font-size: 15px;
-            border: 1px solid #8ecae6;
-            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
         }
 
         .btn-scientific:hover {
-            background: linear-gradient(to bottom, var(--hover-blue), #6aa5c4);
+            background: #7ab7d6;
         }
 
         .btn-bracket {
-            background: linear-gradient(to bottom, var(--bracket-teal), #68b8b0);
+            background: var(--bracket-teal);
             color: var(--white);
-            border: 1px solid #80cbc4;
-            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
         }
 
         .btn-bracket:hover {
-            background: linear-gradient(to bottom, var(--hover-teal), #58a69f);
+            background: #68b8b0;
         }
 
         .btn-memory {
-            background: linear-gradient(to bottom, var(--memory-yellow), var(--hover-yellow));
+            background: var(--memory-yellow);
             color: var(--text-dark);
-            border: 1px solid #ffd166;
-            font-size: 14px;
         }
 
         .btn-memory:hover {
-            background: linear-gradient(to bottom, #ffc745, #e6b635);
+            background: #ffc745;
         }
 
         .btn-clear {
-            background: linear-gradient(to bottom, var(--danger-red), var(--hover-red));
+            background: var(--danger-red);
             color: var(--white);
-            border: 1px solid #ff6b6b;
-            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
         }
 
         .btn-clear:hover {
-            background: linear-gradient(to bottom, var(--hover-red), #dd4a4a);
+            background: #ee5a5a;
         }
 
         .btn-equals {
-            background: linear-gradient(to bottom, var(--success-green), var(--hover-green));
+            background: var(--success-green);
             color: var(--white);
-            border: 1px solid #51cf66;
-            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
         }
 
         .btn-equals:hover {
-            background: linear-gradient(to bottom, var(--hover-green), #3aa84e);
+            background: #40c057;
         }
 
         .btn-delete {
-            background: linear-gradient(to bottom, var(--warning-orange), var(--hover-orange));
+            background: var(--warning-orange);
             color: var(--white);
-            border: 1px solid #ffa94d;
-            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
         }
 
         .btn-delete:hover {
-            background: linear-gradient(to bottom, var(--hover-orange), #e68a3a);
+            background: #ff9a3a;
         }
-        
+
         .bracket-indicator {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--bracket-teal);
-            font-weight: 600;
-            margin-top: 8px;
+            font-weight: bold;
+            margin-top: 5px;
             text-align: right;
-            min-height: 16px;
-            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
-        }
-
-        .calculator-title {
-            text-align: center;
-            color: var(--text-dark);
-            margin-bottom: 20px;
-            font-size: 24px;
-            font-weight: 300;
-            letter-spacing: 2px;
-            position: relative;
-            padding-bottom: 10px;
-        }
-
-        .calculator-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 25%;
-            right: 25%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
         }
     </style>
 </head>
 <body>
     <div class="calculator">
-        <div class="calculator-title">ROSE GOLD CALCULATOR</div>
         <div class="display">
             <div class="display-previous" id="previousDisplay"></div>
             <div class="display-current" id="currentDisplay">0</div>
             <div class="bracket-indicator" id="bracketIndicator"></div>
         </div>
         <div class="buttons">
-            <!-- Scientific Functions Row -->
             <button class="btn-scientific" id="sqrtBtn">√</button>
             <button class="btn-scientific" id="squareBtn">x²</button>
             <button class="btn-scientific" id="percentBtn">%</button>
             <button class="btn-bracket" id="openBracketBtn">(</button>
             <button class="btn-bracket" id="closeBracketBtn">)</button>
             
-            <!-- Row 1 -->
             <button class="btn-scientific" id="piBtn">π</button>
             <button class="btn-memory" id="memoryClearBtn">MC</button>
             <button class="btn-memory" id="memoryRecallBtn">MR</button>
             <button class="btn-memory" id="memoryAddBtn">M+</button>
             <button class="btn-operator" data-operator="/">÷</button>
             
-            <!-- Row 2 -->
             <button class="btn-scientific" id="powerBtn">xʸ</button>
             <button class="btn-number" data-number="7">7</button>
             <button class="btn-number" data-number="8">8</button>
             <button class="btn-number" data-number="9">9</button>
             <button class="btn-operator" data-operator="*">×</button>
             
-            <!-- Row 3 -->
             <button class="btn-scientific" id="absBtn">|x|</button>
             <button class="btn-number" data-number="4">4</button>
             <button class="btn-number" data-number="5">5</button>
             <button class="btn-number" data-number="3">3</button>
             <button class="btn-operator" data-operator="-">−</button>
             
-            <!-- Row 4 -->
             <button class="btn-scientific" id="negateBtn">+/−</button>
             <button class="btn-number" data-number="1">1</button>
             <button class="btn-number" data-number="2">2</button>
             <button class="btn-number" data-number="0">0</button>
             <button class="btn-operator" data-operator="+">+</button>
             
-            <!-- Row 5 -->
             <button class="btn-clear" id="clearBtn">AC</button>
             <button class="btn-delete" id="deleteBtn">DEL</button>
             <button class="btn-decimal" id="decimalBtn">.</button>
@@ -344,42 +226,32 @@
     <script>
         class Calculator {
             constructor() {
-                // Variables to store calculator state
                 this.currentValue = '0';
                 this.previousValue = '';
                 this.operator = null;
                 this.shouldResetDisplay = false;
-                
-                // Bracket tracking
                 this.openBrackets = 0;
                 this.inBracketMode = false;
-                
-                // Memory
                 this.memory = 0;
                 this.memoryActive = false;
                 
-                // Get DOM elements
                 this.currentDisplay = document.getElementById('currentDisplay');
                 this.previousDisplay = document.getElementById('previousDisplay');
                 this.bracketIndicator = document.getElementById('bracketIndicator');
                 
-                // Initialize event listeners
-                this.initializeEventListeners();
-                this.updateBracketIndicator();
+                this.init();
             }
             
-            initializeEventListeners() {
+            init() {
                 // Number buttons
-                const numberButtons = document.querySelectorAll('[data-number]');
-                numberButtons.forEach(button => {
+                document.querySelectorAll('[data-number]').forEach(button => {
                     button.addEventListener('click', () => {
                         this.appendNumber(button.dataset.number);
                     });
                 });
                 
                 // Operator buttons
-                const operatorButtons = document.querySelectorAll('[data-operator]');
-                operatorButtons.forEach(button => {
+                document.querySelectorAll('[data-operator]').forEach(button => {
                     button.addEventListener('click', () => {
                         this.chooseOperator(button.dataset.operator);
                     });
@@ -395,7 +267,7 @@
                 document.getElementById('openBracketBtn').addEventListener('click', () => this.openBracket());
                 document.getElementById('closeBracketBtn').addEventListener('click', () => this.closeBracket());
                 
-                // Scientific function buttons
+                // Scientific functions
                 document.getElementById('sqrtBtn').addEventListener('click', () => this.squareRoot());
                 document.getElementById('squareBtn').addEventListener('click', () => this.square());
                 document.getElementById('percentBtn').addEventListener('click', () => this.percent());
@@ -412,18 +284,17 @@
                 
                 // Keyboard support
                 document.addEventListener('keydown', (e) => this.handleKeyboard(e));
+                
+                this.updateBracketIndicator();
             }
             
             appendNumber(number) {
-                // If we just calculated, start fresh
                 if (this.shouldResetDisplay) {
                     this.currentValue = number;
                     this.shouldResetDisplay = false;
                     this.inBracketMode = false;
                 } else {
-                    // Don't allow multiple leading zeros
                     if (this.currentValue === '0' && number === '0') return;
-                    // Replace leading zero with new number
                     if (this.currentValue === '0') {
                         this.currentValue = number;
                     } else {
@@ -434,13 +305,11 @@
             }
             
             appendDecimal() {
-                // Only allow one decimal point
                 if (this.currentValue.includes('.')) return;
                 
                 if (this.shouldResetDisplay) {
                     this.currentValue = '0.';
                     this.shouldResetDisplay = false;
-                    this.inBracketMode = false;
                 } else {
                     this.currentValue += '.';
                 }
@@ -448,12 +317,10 @@
             }
             
             chooseOperator(operator) {
-                // If we're in bracket mode, close brackets before operator
                 if (this.inBracketMode) {
                     this.closeBracket();
                 }
                 
-                // If we have a previous value and operator, calculate first
                 if (this.operator !== null && !this.shouldResetDisplay) {
                     this.calculate();
                 }
@@ -467,7 +334,7 @@
             calculate() {
                 if (this.operator === null || this.shouldResetDisplay) return;
                 
-                // Close any open brackets before calculation
+                // Close open brackets
                 while (this.openBrackets > 0) {
                     this.closeBracket();
                 }
@@ -479,32 +346,21 @@
                 
                 let result;
                 switch (this.operator) {
-                    case '+':
-                        result = prev + current;
-                        break;
-                    case '-':
-                        result = prev - current;
-                        break;
-                    case '*':
-                        result = prev * current;
-                        break;
-                    case '/':
+                    case '+': result = prev + current; break;
+                    case '-': result = prev - current; break;
+                    case '*': result = prev * current; break;
+                    case '/': 
                         if (current === 0) {
                             alert('Cannot divide by zero!');
                             this.clear();
                             return;
                         }
-                        result = prev / current;
+                        result = prev / current; 
                         break;
-                    case '^':
-                        // Power function (x to the power of y)
-                        result = Math.pow(prev, current);
-                        break;
-                    default:
-                        return;
+                    case '^': result = Math.pow(prev, current); break;
+                    default: return;
                 }
                 
-                // Round to avoid floating point errors
                 this.currentValue = Math.round(result * 100000000) / 100000000 + '';
                 this.operator = null;
                 this.previousValue = '';
@@ -516,20 +372,13 @@
                 this.updateBracketIndicator();
             }
             
-            // BRACKET FUNCTIONS
             openBracket() {
-                // If we just calculated or have a result, start fresh
                 if (this.shouldResetDisplay || this.currentValue === '0') {
                     this.currentValue = '(';
                     this.shouldResetDisplay = false;
-                } else if (this.inBracketMode) {
-                    // If already in bracket mode, we need an operator before another bracket
+                } else if (!this.inBracketMode && !isNaN(parseFloat(this.currentValue))) {
                     return;
                 } else {
-                    // If we have a number, we need an operator before a bracket
-                    if (!isNaN(parseFloat(this.currentValue))) {
-                        return;
-                    }
                     this.currentValue += '(';
                 }
                 
@@ -542,26 +391,20 @@
             closeBracket() {
                 if (this.openBrackets <= 0) return;
                 
-                // Make sure it's a valid number before closing
-                if (!isNaN(parseFloat(this.currentValue)) || this.currentValue.endsWith(')')) {
-                    this.currentValue += ')';
-                    this.openBrackets--;
-                    
-                    // If all brackets are closed, exit bracket mode
-                    if (this.openBrackets === 0) {
-                        this.inBracketMode = false;
-                    }
-                    
-                    this.updateDisplay();
-                    this.updateBracketIndicator();
+                this.currentValue += ')';
+                this.openBrackets--;
+                
+                if (this.openBrackets === 0) {
+                    this.inBracketMode = false;
                 }
+                
+                this.updateDisplay();
+                this.updateBracketIndicator();
             }
             
-            // MEMORY FUNCTIONS
             memoryClear() {
                 this.memory = 0;
                 this.memoryActive = false;
-                alert('Memory Cleared');
             }
             
             memoryRecall() {
@@ -569,8 +412,6 @@
                     this.currentValue = this.memory.toString();
                     this.shouldResetDisplay = true;
                     this.updateDisplay();
-                } else {
-                    alert('Memory is empty');
                 }
             }
             
@@ -580,7 +421,6 @@
                     this.memory += current;
                     this.memoryActive = true;
                     this.shouldResetDisplay = true;
-                    alert(`Added to memory: ${this.memory}`);
                 }
             }
             
@@ -590,11 +430,9 @@
                     this.memory -= current;
                     this.memoryActive = true;
                     this.shouldResetDisplay = true;
-                    alert(`Subtracted from memory: ${this.memory}`);
                 }
             }
             
-            // SCIENTIFIC FUNCTIONS
             squareRoot() {
                 const current = parseFloat(this.currentValue);
                 if (current < 0) {
@@ -662,7 +500,6 @@
             delete() {
                 if (this.shouldResetDisplay) return;
                 
-                // Check if we're deleting a bracket
                 if (this.currentValue.endsWith('(')) {
                     this.openBrackets = Math.max(0, this.openBrackets - 1);
                 } else if (this.currentValue.endsWith(')')) {
@@ -677,7 +514,6 @@
                     this.currentValue = this.currentValue.slice(0, -1);
                 }
                 
-                // Update bracket mode
                 if (this.openBrackets === 0) {
                     this.inBracketMode = false;
                 }
@@ -687,7 +523,6 @@
             }
             
             handleKeyboard(e) {
-                e.preventDefault();
                 if (e.key >= '0' && e.key <= '9') this.appendNumber(e.key);
                 if (e.key === '.') this.appendDecimal();
                 if (e.key === 'Enter' || e.key === '=') this.calculate();
@@ -720,11 +555,7 @@
             }
             
             updateBracketIndicator() {
-                if (this.openBrackets > 0) {
-                    this.bracketIndicator.textContent = `Open Brackets: ${this.openBrackets}`;
-                } else {
-                    this.bracketIndicator.textContent = '';
-                }
+                this.bracketIndicator.textContent = this.openBrackets > 0 ? `Open Brackets: ${this.openBrackets}` : '';
             }
         }
         
