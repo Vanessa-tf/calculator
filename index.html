@@ -3,8 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculator</title>
+    <title>My Scientific Calculator</title>
     <style>
+        /* CSS Custom Properties - Named Color Palette */
+        :root {
+            /* Background Colors */
+            --primary-purple: #667eea;
+            --dark-purple: #764ba2;
+            --hover-purple: #5568d3;
+            
+            /* Button Colors */
+            --success-green: #51cf66;
+            --hover-green: #40c057;
+            
+            --danger-red: #ff6b6b;
+            --hover-red: #ee5a5a;
+            
+            --warning-orange: #ffa94d;
+            --hover-orange: #ff9a3a;
+            
+            --scientific-blue: #4dabf7;
+            --hover-blue: #339af0;
+            
+            /* Neutral Colors */
+            --light-gray: #f0f0f0;
+            --medium-gray: #e0e0e0;
+            --text-dark: #333;
+            --text-light: #888;
+            
+            --white: white;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -17,19 +47,20 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--dark-purple) 100%);
+            padding: 20px;
         }
 
         .calculator {
-            background: white;
+            background: var(--white);
             border-radius: 20px;
-            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 50px var(--shadow-color);
             padding: 20px;
-            width: 320px;
+            width: 380px;
         }
 
         .display {
-            background: #f0f0f0;
+            background: var(--light-gray);
             border-radius: 10px;
             padding: 20px;
             margin-bottom: 20px;
@@ -39,7 +70,7 @@
 
         .display-previous {
             font-size: 14px;
-            color: #888;
+            color: var(--text-light);
             min-height: 20px;
             margin-bottom: 5px;
         }
@@ -47,19 +78,19 @@
         .display-current {
             font-size: 32px;
             font-weight: bold;
-            color: #333;
+            color: var(--text-dark);
             word-wrap: break-word;
         }
 
         .buttons {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
         }
 
         button {
-            padding: 20px;
-            font-size: 18px;
+            padding: 18px 10px;
+            font-size: 16px;
             border: none;
             border-radius: 10px;
             cursor: pointer;
@@ -77,51 +108,60 @@
 
         .btn-number,
         .btn-decimal {
-            background: #f0f0f0;
-            color: #333;
+            background: var(--light-gray);
+            color: var(--text-dark);
         }
 
         .btn-number:hover,
         .btn-decimal:hover {
-            background: #e0e0e0;
+            background: var(--medium-gray);
         }
 
         .btn-operator {
-            background: #667eea;
-            color: white;
+            background: var(--primary-purple);
+            color: var(--white);
         }
 
         .btn-operator:hover {
-            background: #5568d3;
+            background: var(--hover-purple);
+        }
+
+        .btn-scientific {
+            background: var(--scientific-blue);
+            color: var(--white);
+            font-size: 14px;
+        }
+
+        .btn-scientific:hover {
+            background: var(--hover-blue);
         }
 
         .btn-clear {
-            background: #ff6b6b;
-            color: white;
-            grid-column: span 2;
+            background: var(--danger-red);
+            color: var(--white);
         }
 
         .btn-clear:hover {
-            background: #ee5a5a;
+            background: var(--hover-red);
         }
 
         .btn-equals {
-            background: #51cf66;
-            color: white;
+            background: var(--success-green);
+            color: var(--white);
             grid-column: span 2;
         }
 
         .btn-equals:hover {
-            background: #40c057;
+            background: var(--hover-green);
         }
 
         .btn-delete {
-            background: #ffa94d;
-            color: white;
+            background: var(--warning-orange);
+            color: var(--white);
         }
 
         .btn-delete:hover {
-            background: #ff9a3a;
+            background: var(--hover-orange);
         }
     </style>
 </head>
@@ -132,33 +172,44 @@
             <div class="display-current" id="currentDisplay">0</div>
         </div>
         <div class="buttons">
+            <!-- Scientific Functions Row -->
+            <button class="btn-scientific" id="sqrtBtn">√</button>
+            <button class="btn-scientific" id="squareBtn">x²</button>
+            <button class="btn-scientific" id="percentBtn">%</button>
             <button class="btn-clear" id="clearBtn">AC</button>
             <button class="btn-delete" id="deleteBtn">DEL</button>
-            <button class="btn-operator" data-operator="/">÷</button>
             
+            <!-- Row 1 -->
+            <button class="btn-scientific" id="piBtn">π</button>
             <button class="btn-number" data-number="7">7</button>
             <button class="btn-number" data-number="8">8</button>
             <button class="btn-number" data-number="9">9</button>
-            <button class="btn-operator" data-operator="*">×</button>
+            <button class="btn-operator" data-operator="/">÷</button>
             
+            <!-- Row 2 -->
+            <button class="btn-scientific" id="powerBtn">xʸ</button>
             <button class="btn-number" data-number="4">4</button>
             <button class="btn-number" data-number="5">5</button>
             <button class="btn-number" data-number="6">6</button>
-            <button class="btn-operator" data-operator="-">−</button>
+            <button class="btn-operator" data-operator="*">×</button>
             
+            <!-- Row 3 -->
+            <button class="btn-scientific" id="absBtn">|x|</button>
             <button class="btn-number" data-number="1">1</button>
             <button class="btn-number" data-number="2">2</button>
             <button class="btn-number" data-number="3">3</button>
-            <button class="btn-operator" data-operator="+">+</button>
+            <button class="btn-operator" data-operator="-">−</button>
             
+            <!-- Row 4 -->
+            <button class="btn-scientific" id="negateBtn">+/−</button>
             <button class="btn-number" data-number="0">0</button>
             <button class="btn-decimal" id="decimalBtn">.</button>
             <button class="btn-equals" id="equalsBtn">=</button>
+            <button class="btn-operator" data-operator="+">+</button>
         </div>
     </div>
 
     <script>
-        
         // Calculator class to organize our code
         class Calculator {
             constructor() {
@@ -198,6 +249,15 @@
                 document.getElementById('deleteBtn').addEventListener('click', () => this.delete());
                 document.getElementById('decimalBtn').addEventListener('click', () => this.appendDecimal());
                 document.getElementById('equalsBtn').addEventListener('click', () => this.calculate());
+                
+                // Scientific function buttons
+                document.getElementById('sqrtBtn').addEventListener('click', () => this.squareRoot());
+                document.getElementById('squareBtn').addEventListener('click', () => this.square());
+                document.getElementById('percentBtn').addEventListener('click', () => this.percent());
+                document.getElementById('piBtn').addEventListener('click', () => this.insertPi());
+                document.getElementById('powerBtn').addEventListener('click', () => this.chooseOperator('^'));
+                document.getElementById('absBtn').addEventListener('click', () => this.absolute());
+                document.getElementById('negateBtn').addEventListener('click', () => this.negate());
                 
                 // Keyboard support
                 document.addEventListener('keydown', (e) => this.handleKeyboard(e));
@@ -273,6 +333,10 @@
                         }
                         result = prev / current;
                         break;
+                    case '^':
+                        // Power function (x to the power of y)
+                        result = Math.pow(prev, current);
+                        break;
                     default:
                         return;
                 }
@@ -284,6 +348,66 @@
                 this.shouldResetDisplay = true;
                 this.updateDisplay();
                 this.updatePreviousDisplay();
+            }
+            
+            // SCIENTIFIC FUNCTIONS
+            
+            squareRoot() {
+                // √ - Square root function
+                const current = parseFloat(this.currentValue);
+                if (current < 0) {
+                    alert('Cannot calculate square root of negative number!');
+                    return;
+                }
+                const result = Math.sqrt(current);
+                this.currentValue = Math.round(result * 100000000) / 100000000 + '';
+                this.shouldResetDisplay = true;
+                this.updateDisplay();
+            }
+            
+            square() {
+                // x² - Square function
+                const current = parseFloat(this.currentValue);
+                const result = current * current;
+                this.currentValue = Math.round(result * 100000000) / 100000000 + '';
+                this.shouldResetDisplay = true;
+                this.updateDisplay();
+            }
+            
+            percent() {
+                // % - Percentage function (divides by 100)
+                const current = parseFloat(this.currentValue);
+                const result = current / 100;
+                this.currentValue = result + '';
+                this.shouldResetDisplay = true;
+                this.updateDisplay();
+            }
+            
+            insertPi() {
+                // π - Insert Pi value (3.14159...)
+                this.currentValue = Math.PI + '';
+                this.shouldResetDisplay = true;
+                this.updateDisplay();
+            }
+            
+            absolute() {
+                // |x| - Absolute value (makes negative numbers positive)
+                const current = parseFloat(this.currentValue);
+                const result = Math.abs(current);
+                this.currentValue = result + '';
+                this.shouldResetDisplay = true;
+                this.updateDisplay();
+            }
+            
+            negate() {
+                // +/- - Change sign (positive to negative or vice versa)
+                if (this.currentValue === '0') return;
+                if (this.currentValue.startsWith('-')) {
+                    this.currentValue = this.currentValue.slice(1);
+                } else {
+                    this.currentValue = '-' + this.currentValue;
+                }
+                this.updateDisplay();
             }
             
             clear() {
@@ -298,7 +422,7 @@
             delete() {
                 if (this.shouldResetDisplay) return;
                 
-                if (this.currentValue.length === 1) {
+                if (this.currentValue.length === 1 || (this.currentValue.length === 2 && this.currentValue.startsWith('-'))) {
                     this.currentValue = '0';
                 } else {
                     this.currentValue = this.currentValue.slice(0, -1);
@@ -313,6 +437,7 @@
                 if (e.key === 'Backspace') this.delete();
                 if (e.key === 'Escape') this.clear();
                 if (['+', '-', '*', '/'].includes(e.key)) this.chooseOperator(e.key);
+                if (e.key === '%') this.percent();
             }
             
             updateDisplay() {
@@ -325,7 +450,8 @@
                         '+': '+',
                         '-': '−',
                         '*': '×',
-                        '/': '÷'
+                        '/': '÷',
+                        '^': '^'
                     }[this.operator];
                     this.previousDisplay.textContent = `${this.previousValue} ${operatorSymbol}`;
                 } else {
