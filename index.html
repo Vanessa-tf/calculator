@@ -43,7 +43,7 @@
             box-shadow: 0 10px 30px rgba(90, 74, 66, 0.15);
             padding: 20px;
             width: 400px;
-            border-top: 4px solid var(--accent-gold);
+            /* Removed the gold top border */
         }
 
         .display {
@@ -234,6 +234,7 @@
                 this.inBracketMode = false;
                 this.memory = 0;
                 this.memoryActive = false;
+                this.waitingForNextOperand = false;
                 
                 this.currentDisplay = document.getElementById('currentDisplay');
                 this.previousDisplay = document.getElementById('previousDisplay');
@@ -289,9 +290,10 @@
             }
             
             appendNumber(number) {
-                if (this.shouldResetDisplay) {
+                if (this.shouldResetDisplay || this.waitingForNextOperand) {
                     this.currentValue = number;
                     this.shouldResetDisplay = false;
+                    this.waitingForNextOperand = false;
                     this.inBracketMode = false;
                 } else {
                     if (this.currentValue === '0' && number === '0') return;
@@ -307,9 +309,10 @@
             appendDecimal() {
                 if (this.currentValue.includes('.')) return;
                 
-                if (this.shouldResetDisplay) {
+                if (this.shouldResetDisplay || this.waitingForNextOperand) {
                     this.currentValue = '0.';
                     this.shouldResetDisplay = false;
+                    this.waitingForNextOperand = false;
                 } else {
                     this.currentValue += '.';
                 }
@@ -321,18 +324,18 @@
                     this.closeBracket();
                 }
                 
-                if (this.operator !== null && !this.shouldResetDisplay) {
+                if (this.operator !== null && !this.shouldResetDisplay && !this.waitingForNextOperand) {
                     this.calculate();
                 }
                 
                 this.operator = operator;
                 this.previousValue = this.currentValue;
-                this.shouldResetDisplay = true;
+                this.waitingForNextOperand = true;
                 this.updatePreviousDisplay();
             }
             
             calculate() {
-                if (this.operator === null || this.shouldResetDisplay) return;
+                if (this.operator === null || this.waitingForNextOperand) return;
                 
                 // Close open brackets
                 while (this.openBrackets > 0) {
@@ -365,6 +368,7 @@
                 this.operator = null;
                 this.previousValue = '';
                 this.shouldResetDisplay = true;
+                this.waitingForNextOperand = false;
                 this.inBracketMode = false;
                 this.openBrackets = 0;
                 this.updateDisplay();
@@ -373,9 +377,10 @@
             }
             
             openBracket() {
-                if (this.shouldResetDisplay || this.currentValue === '0') {
+                if (this.shouldResetDisplay || this.currentValue === '0' || this.waitingForNextOperand) {
                     this.currentValue = '(';
                     this.shouldResetDisplay = false;
+                    this.waitingForNextOperand = false;
                 } else if (!this.inBracketMode && !isNaN(parseFloat(this.currentValue))) {
                     return;
                 } else {
@@ -462,7 +467,7 @@
             }
             
             insertPi() {
-                this.currentValue = Math.PI + '';
+                this.currentValue = Math.PI.toString();
                 this.shouldResetDisplay = true;
                 this.updateDisplay();
             }
@@ -470,17 +475,29 @@
             absolute() {
                 const current = parseFloat(this.currentValue);
                 const result = Math.abs(current);
-                this.currentValue = result + '';
+                this.currentValue = result.toString();
                 this.shouldResetDisplay = true;
                 this.updateDisplay();
             }
             
             negate() {
                 if (this.currentValue === '0') return;
-                if (this.currentValue.startsWith('-')) {
-                    this.currentValue = this.currentValue.slice(1);
+                
+                // Check if the current value is already in parentheses or bracket mode
+                if (this.inBracketMode || this.currentValue.includes('(')) {
+                    // For complex expressions, we need to handle differently
+                    const current = parseFloat(this.currentValue);
+                    if (!isNaN(current)) {
+                        this.currentValue = (-current).toString();
+                        this.shouldResetDisplay = true;
+                    }
                 } else {
-                    this.currentValue = '-' + this.currentValue;
+                    // Simple number negation
+                    if (this.currentValue.startsWith('-')) {
+                        this.currentValue = this.currentValue.slice(1);
+                    } else {
+                        this.currentValue = '-' + this.currentValue;
+                    }
                 }
                 this.updateDisplay();
             }
@@ -490,6 +507,7 @@
                 this.previousValue = '';
                 this.operator = null;
                 this.shouldResetDisplay = false;
+                this.waitingForNextOperand = false;
                 this.openBrackets = 0;
                 this.inBracketMode = false;
                 this.updateDisplay();
@@ -498,7 +516,7 @@
             }
             
             delete() {
-                if (this.shouldResetDisplay) return;
+                if (this.shouldResetDisplay || this.waitingForNextOperand) return;
                 
                 if (this.currentValue.endsWith('(')) {
                     this.openBrackets = Math.max(0, this.openBrackets - 1);
@@ -525,7 +543,10 @@
             handleKeyboard(e) {
                 if (e.key >= '0' && e.key <= '9') this.appendNumber(e.key);
                 if (e.key === '.') this.appendDecimal();
-                if (e.key === 'Enter' || e.key === '=') this.calculate();
+                if (e.key === 'Enter' || e.key === '=') {
+                    e.preventDefault();
+                    this.calculate();
+                }
                 if (e.key === 'Backspace') this.delete();
                 if (e.key === 'Escape') this.clear();
                 if (['+', '-', '*', '/'].includes(e.key)) this.chooseOperator(e.key);
@@ -533,6 +554,7 @@
                 if (e.key === '(') this.openBracket();
                 if (e.key === ')') this.closeBracket();
                 if (e.key === '^') this.chooseOperator('^');
+                if (e.key === '_' || (e.key === '-' && e.shiftKey)) this.negate();
             }
             
             updateDisplay() {
