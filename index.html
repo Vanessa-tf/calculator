@@ -43,7 +43,6 @@
             box-shadow: 0 10px 30px rgba(90, 74, 66, 0.15);
             padding: 20px;
             width: 400px;
-            /* Removed the gold top border */
         }
 
         .display {
@@ -54,6 +53,11 @@
             text-align: right;
             min-height: 80px;
             border: 1px solid var(--rose-gold);
+            cursor: text;
+        }
+
+        .display:hover {
+            background: #f5e1dc;
         }
 
         .display-previous {
@@ -69,6 +73,14 @@
             color: var(--text-dark);
             word-wrap: break-word;
             min-height: 40px;
+            outline: none;
+            cursor: text;
+        }
+
+        .display-current:focus {
+            background: #f0d9d3;
+            border-radius: 5px;
+            padding: 0 5px;
         }
 
         .buttons {
@@ -181,7 +193,7 @@
     <div class="calculator">
         <div class="display">
             <div class="display-previous" id="previousDisplay"></div>
-            <div class="display-current" id="currentDisplay">0</div>
+            <div class="display-current" id="currentDisplay" contenteditable="true" spellcheck="false">0</div>
             <div class="bracket-indicator" id="bracketIndicator"></div>
         </div>
         <div class="buttons">
@@ -235,6 +247,7 @@
                 this.memory = 0;
                 this.memoryActive = false;
                 this.waitingForNextOperand = false;
+                this.isEditing = false;
                 
                 this.currentDisplay = document.getElementById('currentDisplay');
                 this.previousDisplay = document.getElementById('previousDisplay');
@@ -283,13 +296,70 @@
                 document.getElementById('memoryAddBtn').addEventListener('click', () => this.memoryAdd());
                 document.getElementById('memorySubtractBtn').addEventListener('click', () => this.memorySubtract());
                 
+                // Click-to-edit functionality
+                this.currentDisplay.addEventListener('click', () => {
+                    this.startEditing();
+                });
+                
+                this.currentDisplay.addEventListener('keydown', (e) => {
+                    this.handleEditKeydown(e);
+                });
+                
+                this.currentDisplay.addEventListener('blur', () => {
+                    this.finishEditing();
+                });
+                
                 // Keyboard support
                 document.addEventListener('keydown', (e) => this.handleKeyboard(e));
                 
                 this.updateBracketIndicator();
             }
             
+            startEditing() {
+                this.isEditing = true;
+                this.currentDisplay.focus();
+            }
+            
+            finishEditing() {
+                this.isEditing = false;
+                this.currentValue = this.currentDisplay.textContent.trim();
+                if (!this.currentValue || this.currentValue === '') {
+                    this.currentValue = '0';
+                }
+                this.validateAndUpdate();
+            }
+            
+            handleEditKeydown(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    this.finishEditing();
+                    this.calculate();
+                } else if (e.key === 'Escape') {
+                    this.currentDisplay.textContent = this.currentValue;
+                    this.currentDisplay.blur();
+                    this.isEditing = false;
+                }
+            }
+            
+            validateAndUpdate() {
+                // Remove any invalid characters
+                this.currentValue = this.currentValue.replace(/[^0-9+\-*/.()^π]/g, '');
+                
+                // Count brackets
+                const openBrackets = (this.currentValue.match(/\(/g) || []).length;
+                const closeBrackets = (this.currentValue.match(/\)/g) || []).length;
+                this.openBrackets = Math.max(0, openBrackets - closeBrackets);
+                this.inBracketMode = this.openBrackets > 0;
+                
+                this.updateDisplay();
+                this.updateBracketIndicator();
+            }
+            
             appendNumber(number) {
+                if (this.isEditing) {
+                    this.finishEditing();
+                }
+                
                 if (this.shouldResetDisplay || this.waitingForNextOperand) {
                     this.currentValue = number;
                     this.shouldResetDisplay = false;
@@ -307,24 +377,62 @@
             }
             
             appendDecimal() {
-                if (this.currentValue.includes('.')) return;
+                if (this.isEditing) {
+                    this.finishEditing();
+                }
+                
+                // Don't add decimal if we're in bracket mode and last character is '('
+                if (this.inBracketMode && this.currentValue.endsWith('(')) {
+                    return;
+                }
+                
+                // Find the last number in the current value
+                const lastNumberMatch = this.currentValue.match(/[\d.]+$/);
+                if (lastNumberMatch && lastNumberMatch[0].includes('.')) {
+                    return; // Last number already has a decimal
+                }
                 
                 if (this.shouldResetDisplay || this.waitingForNextOperand) {
                     this.currentValue = '0.';
                     this.shouldResetDisplay = false;
                     this.waitingForNextOperand = false;
                 } else {
-                    this.currentValue += '.';
+                    // If we're at the start or last character is an operator, prepend '0.'
+                    if (this.currentValue === '' || /[+\-*/^(]/.test(this.currentValue.slice(-1))) {
+                        this.currentValue += '0.';
+                    } else {
+                        this.currentValue += '.';
+                    }
                 }
                 this.updateDisplay();
             }
             
             chooseOperator(operator) {
+                if (this.isEditing) {
+                    this.finishEditing();
+                }
+                
                 if (this.inBracketMode) {
                     this.closeBracket();
                 }
                 
-                if (this.operator !== null && !this.shouldResetDisplay && !this.waitingForNextOperand) {
+                // Handle consecutive operators (like 9- -9)
+                if (this.waitingForNextOperand) {
+                    if (operator === '-') {
+                        // Allow negative sign after operator
+                        this.currentValue = '-';
+                        this.waitingForNextOperand = false;
+                        this.shouldResetDisplay = false;
+                        this.updateDisplay();
+                        return;
+                    }
+                    // Replace previous operator with new one
+                    this.operator = operator;
+                    this.updatePreviousDisplay();
+                    return;
+                }
+                
+                if (this.operator !== null && !this.shouldResetDisplay) {
                     this.calculate();
                 }
                 
@@ -335,15 +443,32 @@
             }
             
             calculate() {
-                if (this.operator === null || this.waitingForNextOperand) return;
+                if (this.isEditing) {
+                    this.finishEditing();
+                }
+                
+                if (this.operator === null && !this.waitingForNextOperand) {
+                    return; // Nothing to calculate
+                }
                 
                 // Close open brackets
                 while (this.openBrackets > 0) {
                     this.closeBracket();
                 }
                 
-                const prev = parseFloat(this.previousValue);
-                const current = parseFloat(this.currentValue);
+                let prev, current;
+                
+                if (this.operator !== null) {
+                    prev = this.parseExpression(this.previousValue);
+                    current = this.parseExpression(this.currentValue);
+                } else {
+                    // Just evaluate the current expression
+                    const result = this.parseExpression(this.currentValue);
+                    this.currentValue = result.toString();
+                    this.shouldResetDisplay = true;
+                    this.updateDisplay();
+                    return;
+                }
                 
                 if (isNaN(prev) || isNaN(current)) return;
                 
@@ -376,13 +501,45 @@
                 this.updateBracketIndicator();
             }
             
+            parseExpression(expr) {
+                // Replace π with Math.PI
+                expr = expr.replace(/π/g, Math.PI.toString());
+                
+                // Handle negative numbers at start
+                if (expr.startsWith('-')) {
+                    expr = '0' + expr;
+                }
+                
+                // Handle expressions like 9- -9 by adding parentheses
+                expr = expr.replace(/([+\-*/^])-/g, '$1(0-');
+                
+                // Close any opened parentheses
+                const openParens = (expr.match(/\(/g) || []).length;
+                const closeParens = (expr.match(/\)/g) || []).length;
+                expr += ')'.repeat(Math.max(0, openParens - closeParens));
+                
+                try {
+                    // Replace ^ with ** for exponentiation
+                    expr = expr.replace(/\^/g, '**');
+                    return Function(`'use strict'; return (${expr})`)();
+                } catch (error) {
+                    console.error('Error parsing expression:', error);
+                    return NaN;
+                }
+            }
+            
             openBracket() {
+                if (this.isEditing) {
+                    this.finishEditing();
+                }
+                
                 if (this.shouldResetDisplay || this.currentValue === '0' || this.waitingForNextOperand) {
                     this.currentValue = '(';
                     this.shouldResetDisplay = false;
                     this.waitingForNextOperand = false;
                 } else if (!this.inBracketMode && !isNaN(parseFloat(this.currentValue))) {
-                    return;
+                    // If we have a number, add operator before bracket
+                    this.currentValue += '*(';
                 } else {
                     this.currentValue += '(';
                 }
@@ -421,7 +578,7 @@
             }
             
             memoryAdd() {
-                const current = parseFloat(this.currentValue);
+                const current = this.parseExpression(this.currentValue);
                 if (!isNaN(current)) {
                     this.memory += current;
                     this.memoryActive = true;
@@ -430,7 +587,7 @@
             }
             
             memorySubtract() {
-                const current = parseFloat(this.currentValue);
+                const current = this.parseExpression(this.currentValue);
                 if (!isNaN(current)) {
                     this.memory -= current;
                     this.memoryActive = true;
@@ -439,7 +596,7 @@
             }
             
             squareRoot() {
-                const current = parseFloat(this.currentValue);
+                const current = this.parseExpression(this.currentValue);
                 if (current < 0) {
                     alert('Cannot calculate square root of negative number!');
                     return;
@@ -451,7 +608,7 @@
             }
             
             square() {
-                const current = parseFloat(this.currentValue);
+                const current = this.parseExpression(this.currentValue);
                 const result = current * current;
                 this.currentValue = Math.round(result * 100000000) / 100000000 + '';
                 this.shouldResetDisplay = true;
@@ -459,7 +616,7 @@
             }
             
             percent() {
-                const current = parseFloat(this.currentValue);
+                const current = this.parseExpression(this.currentValue);
                 const result = current / 100;
                 this.currentValue = result + '';
                 this.shouldResetDisplay = true;
@@ -473,7 +630,7 @@
             }
             
             absolute() {
-                const current = parseFloat(this.currentValue);
+                const current = this.parseExpression(this.currentValue);
                 const result = Math.abs(current);
                 this.currentValue = result.toString();
                 this.shouldResetDisplay = true;
@@ -481,25 +638,19 @@
             }
             
             negate() {
+                if (this.isEditing) {
+                    this.finishEditing();
+                }
+                
                 if (this.currentValue === '0') return;
                 
-                // Check if the current value is already in parentheses or bracket mode
-                if (this.inBracketMode || this.currentValue.includes('(')) {
-                    // For complex expressions, we need to handle differently
-                    const current = parseFloat(this.currentValue);
-                    if (!isNaN(current)) {
-                        this.currentValue = (-current).toString();
-                        this.shouldResetDisplay = true;
-                    }
-                } else {
-                    // Simple number negation
-                    if (this.currentValue.startsWith('-')) {
-                        this.currentValue = this.currentValue.slice(1);
-                    } else {
-                        this.currentValue = '-' + this.currentValue;
-                    }
+                // Parse current value
+                const current = this.parseExpression(this.currentValue);
+                if (!isNaN(current)) {
+                    this.currentValue = (-current).toString();
+                    this.shouldResetDisplay = true;
+                    this.updateDisplay();
                 }
-                this.updateDisplay();
             }
             
             clear() {
@@ -510,12 +661,17 @@
                 this.waitingForNextOperand = false;
                 this.openBrackets = 0;
                 this.inBracketMode = false;
+                this.isEditing = false;
                 this.updateDisplay();
                 this.updatePreviousDisplay();
                 this.updateBracketIndicator();
             }
             
             delete() {
+                if (this.isEditing) {
+                    this.finishEditing();
+                }
+                
                 if (this.shouldResetDisplay || this.waitingForNextOperand) return;
                 
                 if (this.currentValue.endsWith('(')) {
@@ -541,6 +697,8 @@
             }
             
             handleKeyboard(e) {
+                if (this.isEditing) return;
+                
                 if (e.key >= '0' && e.key <= '9') this.appendNumber(e.key);
                 if (e.key === '.') this.appendDecimal();
                 if (e.key === 'Enter' || e.key === '=') {
